@@ -1,0 +1,34 @@
+<html>  
+<head>  
+    <meta http-equiv="Content-Type" content="text/html; charset=gbk"/>  
+    <script type="text/javascript">  
+        var smsTypeDesc = {"option1":"回访短信","option2":"邮件短信","option3":"测试短信"};  
+        function EnumaKey(){  
+            for(var key in smsTypeDesc){  
+                alert(key);  
+            }  
+        }  
+        function GetVal(){  
+            var key = prompt("请输入要查询的key","4");  
+                        if("undefined"==typeof(smsTypeDesc)) return;  
+            if("undefined"==typeof(smsTypeDesc[key])){  
+                alert("输入的key:"+key+"， 在json对象中不存在！");  
+                return;  
+            }     
+            alert("您输入的key是："+key + "，该key所对应的值是："+smsTypeDesc[key]);  
+        }  
+        function GetValByKey(){  
+            alert(smsTypeDesc.option3);  
+        }  
+    </script>  
+</head>  
+<body>  
+    Json对象：<br/>  
+    <pre>  
+        var smsTypeDesc = {"option1":"回访短信","option2":"邮件短信","option3":"测试短信"};
+    </pre>  
+    <input type="button" onclick="EnumaKey();" value="遍历smsTypeDesc所有key"/>  
+    <input type="button" onclick="GetVal();" value="获取smsTypeDesc动态指定key的值"/>  
+    <input type="button" onclick="GetValByKey();" value="获取smsTypeDesc key option3 所对应的值"/>  
+</body>  
+</html>  

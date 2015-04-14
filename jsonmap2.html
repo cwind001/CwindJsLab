@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+var jsonStr = '{"key1":"value1","key2":"value2","key3":"value3"}';
+var obj = JSON.parse(jsonStr);
+
+    function init(){  
+		var selector = document.getElementById("selector");
+		var selector2 = document.getElementById("selector2");
+		for(var key in obj){
+			var opt = document.createElement("option");
+			opt.value = key;
+			opt.innerText = key;
+			selector.appendChild(opt);
+				
+			var opt2 = document.createElement("option");
+			opt2.value = obj[key];
+			opt2.innerText = obj[key];
+			selector2.appendChild(opt2);
+		}
+    }  
+
+	function selectorChange(value) {
+		var selector2 = document.getElementById("selector2");
+		selector2.value=obj[value];
+	}
+	
+</script>
+</head>
+
+<body onload=init()>
+
+<h2>Parsing JSON Map</h2>
+<select id="selector" onchange=selectorChange(this.value)></select>
+<select id="selector2" disabled=true></select>
+
+</body>
+</html>
