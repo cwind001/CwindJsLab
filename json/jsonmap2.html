@@ -8,17 +8,14 @@ var obj = JSON.parse(jsonStr);
     function init(){  
 		var selector = document.getElementById("selector");
 		var selector2 = document.getElementById("selector2");
-		for(var key in obj){
-			var opt = document.createElement("option");
-			opt.value = key;
-			opt.innerText = key;
-			selector.appendChild(opt);
-				
-			var opt2 = document.createElement("option");
-			opt2.value = obj[key];
-			opt2.innerText = obj[key];
-			selector2.appendChild(opt2);
-		}
+        var selectorOpts = selector.options;
+        var selector2Opts = selector2.options;
+        
+        for(var key in obj){
+            selectorOpts.add(new Option(key,key));
+            
+            selector2Opts.add(new Option(obj[key],obj[key]));
+        }
     }  
 
 	function selectorChange(value) {
