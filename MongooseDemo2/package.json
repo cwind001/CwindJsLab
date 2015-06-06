@@ -1,0 +1,11 @@
+{
+  "name": "ConnectToMongoDB",
+  "author": "Runnable",
+  "version": "0.0.1",
+  "description": "Connect to MongoDB",
+  "dependencies": {
+    "mongoose": "*",
+    "express": "*"
+   },
+  "engine": "node 0.6.x"
+}
