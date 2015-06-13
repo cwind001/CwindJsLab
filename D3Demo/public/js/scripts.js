@@ -4,10 +4,11 @@ function Topology(ele){
         h=ele.clientHeight,
         self=this;
 
-    //创建重力图 - d3.layout.force()
-    this.force = d3.layout.force().gravity(.05).linkDistance(200).charge(-800).size([w, h]);
-    this.nodes=this.force.nodes();
-    this.links=this.force.links();
+    //创建重力图 - d3.layout.force() 
+    //doc: https://github.com/mbostock/d3/wiki/Force-Layout
+    this.force = d3.layout.force().gravity(.05).linkDistance(200).charge(-800).size([w, h]); // 构造器模式，但这里列出的只是样式
+    this.nodes=this.force.nodes(); // 设置节点 {id:'10.4.42.1',type:'router',status:1}, {id:'10.4.43.1',type:'switch',status:1}
+    this.links=this.force.links(); // 设置连接 {source:'10.4.42.1',target:'10.4.43.1'} 通过指定 source和target节点id来连线
     this.clickFn=function(){};
     this.vis = d3.select(ele).append("svg:svg")
                  .attr("width", w).attr("height", h).attr("pointer-events", "all");
