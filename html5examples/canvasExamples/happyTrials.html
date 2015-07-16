@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8"/>
+</head>
+<body>
+	<h1>HTML5 Canvas Demo</h1>
+	<canvas id="trails" style="border: 1px solid;" width="400" height="600"></canvas>
+
+	<script>
+
+		// function to create the shape of the tree
+		function createCanopyPath(context) {
+			//绘制树冠
+			context.beginPath();
+
+			context.moveTo(-25, -50);
+			context.lineTo(-10, -80);
+			context.lineTo(-20, -80);
+			context.lineTo(-5, -110);
+			context.lineTo(-15, -110);
+
+			// 树的顶点
+			context.lineTo(0, -140);
+
+			context.lineTo(15, -110);
+			context.lineTo(5, -110);
+			context.lineTo(20, -80);
+			context.lineTo(10, -80);
+			context.lineTo(25, -50);
+
+			//连接起点，闭合路径
+			context.closePath();
+		}
+
+		function drawTrails() {
+			var canvas = document.getElementById('trails');
+			var context = canvas.getContext('2d');
+
+			// 在(130, 250)画第一棵树
+			context.save();
+			context.translate(130, 250);
+
+			drawTree(context);
+			context.restore();
+
+			// 在(260, 500)画第二棵树
+			context.save();
+			context.translate(260, 500);
+			context.scale(2, 2);
+			drawTree(context);
+			context.restore();
+
+			context.translate(-10, 350);
+			context.beginPath();
+
+			context.moveTo(0, 0);
+			context.quadraticCurveTo(170, -50, 260, -190);
+			context.quadraticCurveTo(310, -250, 410, -250);
+
+			context.strokeStyle = context.createPattern(gravel, 'repeat');
+
+			context.lineWidth = 20;
+			context.stroke();
+
+			context.restore();
+		}
+
+		// 创建树对象绘制函数
+		function drawTree(context){
+			// 创建用作树干纹理的三阶水平渐变
+			var trunkGradient = context.createLinearGradient(-5, -50, 5, -50);
+
+			// 树干的左侧边缘是一般程度的棕色
+			trunkGradient.addColorStop(0, '#663300');
+			trunkGradient.addColorStop(0.4, "#996600");
+			trunkGradient.addColorStop(1, '#552200');
+
+			context.fillStyle = trunkGradient;
+			context.fillRect(-5, -50, 10, 50);
+
+			// 创建垂直渐变，以用作树冠在树干上投影
+			var canopyShadow = context.createLinearGradient(0, -50, 0, 0);
+
+			// 投影渐变的起点是透明度设为50%的黑色
+			canopyShadow.addColorStop(0, 'rgba(0, 0, 0, 0.5)');
+
+			// 方向垂直向下，渐变色在很短的距离内迅速渐变至完全透明，
+			// 这段长度以外的树干上没有投影
+			canopyShadow.addColorStop(0.2, 'rgba(0, 0, 0, 0.0)');
+
+			// 在树干上填充投影渐变
+			context.fillStyle = canopyShadow;
+			context.fillRect(-5, -50, 10, 50);
+
+			// 创建表现树冠的路径
+			createCanopyPath(context);
+
+			// 加宽线条
+			context.lineWidth = 4;
+			// 平滑路径的接合点
+			context.lineJoin = 'round';
+			// 将颜色改为棕色
+			context.strokeStyle = '#663300';
+
+			// 绘制当前路径
+			context.stroke();
+
+			context.fillStyle = '#339900';
+			context.fill();
+
+			// 尝试使用变换画出阴影
+			context.save();
+
+			// X值随着Y值的增加而增加，借助拉伸变换
+			// 可以创建一棵用作阴影的倾斜的树
+			// 应用了变换以后，所有坐标都与矩阵相乘
+			context.transform(1, 0, -0.5, 1, 0, 0);
+			context.scale(1, 0.6);
+
+			context.fillStyle = 'rgba(0, 0, 0, 0.2)';
+			context.fillRect(-5, -50, 10, 50);
+			createCanopyPath(context);
+			context.fill();
+
+			context.restore();
+		}
+
+		// function to draw a line, deprecated
+		function drawDiagonal() {
+
+			// 取得canvas元素及其绘图上下文
+			var canvas = document.getElementById('diagnonal');
+			var context = canvas.getContext('2d');
+
+			// 保存当前绘图状态
+			context.save();
+
+			// 向右下方移动绘图上下文
+			context.translate(70, 140);
+
+			//以原点为起点，绘制与前面相同的线段
+			context.beginPath();
+			context.moveTo(0, 0);
+			context.lineTo(70, -70);
+
+			// 将这条线绘制到canvas上
+			context.stroke();
+
+		}
+
+		//window.addEventListener("load", drawTrails, true);
+
+		// 加载砾石背景图
+		var gravel = new Image();
+		gravel.src = "gravel.jpg";
+		gravel.onload = function() {
+			drawTrails();
+		}
+	</script>
+</body>
+</html>
