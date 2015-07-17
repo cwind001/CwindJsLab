@@ -5,10 +5,11 @@
 </head>
 <body>
 	<h1>HTML5 Canvas Demo</h1>
-	<canvas id="trails" style="border: 1px solid;" width="400" height="600"></canvas>
-
+	<canvas id="sunny" style="border: 1px solid;" width="400" height="600"></canvas>
+	<canvas id="rainny" style="border: 1px solid;" width="400" height="600"></canvas>
+	
 	<script>
-
+		var canvas = document.getElementById('rainny');
 		// function to create the shape of the tree
 		function createCanopyPath(context) {
 			//绘制树冠
@@ -33,9 +34,41 @@
 			context.closePath();
 		}
 
+		function drawTitle(context){
+			// 在Canvas上绘制标题文本
+			context.save();
+
+			// 字号为60px，字体为impact
+			context.font = "60px impact";
+
+			// 将文本填充为棕色
+			context.fillStyle = '#996600';
+
+			// 将文本设为居中对齐
+			context.textAlign = 'center';
+
+			// 设置文字阴影的颜色为黑色，透明度为20%
+			context.shadowColor = 'rgba(0, 0, 0, 0.2)';
+
+			// 将阴影向右移动15px, 向上移动10px
+			context.shadowOffsetX = 15;
+			context.shadowOffsetY = -10;
+
+			// 轻微模糊阴影
+			context.shadowBlur = 2;
+
+			// 在canvas顶部中央的位置
+			// 以大字体的形式显示文本
+			context.fillText('Happy Trails', 200, 60, 400);
+			context.restore();
+			
+			
+		}
+
 		function drawTrails() {
-			var canvas = document.getElementById('trails');
 			var context = canvas.getContext('2d');
+
+			drawTitle(context);
 
 			// 在(130, 250)画第一棵树
 			context.save();
@@ -64,6 +97,42 @@
 			context.stroke();
 
 			context.restore();
+			
+		}
+
+		function drawSunnyTrails(canvas) {
+			var context = canvas.getContext('2d');
+
+			drawTitle(context);
+
+			// 在(130, 250)画第一棵树
+			context.save();
+			context.translate(130, 250);
+
+			drawTree(context);
+			context.restore();
+
+			// 在(260, 500)画第二棵树
+			context.save();
+			context.translate(260, 500);
+			context.scale(2, 2);
+			drawTree(context);
+			context.restore();
+
+			context.translate(-10, 350);
+			context.beginPath();
+
+			context.moveTo(0, 0);
+			context.quadraticCurveTo(170, -50, 260, -190);
+			context.quadraticCurveTo(310, -250, 410, -250);
+
+			context.strokeStyle = context.createPattern(gravel, 'repeat');
+
+			context.lineWidth = 20;
+			context.stroke();
+
+			context.restore();
+			
 		}
 
 		// 创建树对象绘制函数
@@ -126,36 +195,83 @@
 			context.restore();
 		}
 
-		// function to draw a line, deprecated
-		function drawDiagonal() {
-
-			// 取得canvas元素及其绘图上下文
-			var canvas = document.getElementById('diagnonal');
-			var context = canvas.getContext('2d');
-
-			// 保存当前绘图状态
-			context.save();
-
-			// 向右下方移动绘图上下文
-			context.translate(70, 140);
-
-			//以原点为起点，绘制与前面相同的线段
-			context.beginPath();
-			context.moveTo(0, 0);
-			context.lineTo(70, -70);
-
-			// 将这条线绘制到canvas上
-			context.stroke();
-
-		}
-
 		//window.addEventListener("load", drawTrails, true);
 
 		// 加载砾石背景图
 		var gravel = new Image();
 		gravel.src = "gravel.jpg";
 		gravel.onload = function() {
+			var canvas = document.getElementById('sunny');
+			drawSunnyTrails(canvas);
+		}
+
+		// 为雨天纹理效果创建一个image对象
+		
+		var rain = new Image();
+		rain.src = "rain.png";
+		rain.onload = function() {
+			//drawAframe();
+			window.requestAnimFrame(loopAnimation, canvas);	
+		}
+
+		window.requestAnimFrame = (function(){
+			return  window.requestAnimationFrame ||
+					window.webkitReuestAnimationFrame ||
+					window.mozRequestAnimationFrame ||
+					window.oRequestAnimationFrame ||
+					window.msRequestAnimationFrame ||
+					// 如果不存在上述函数，则使用旧的setTimeout技术
+					function(/* function */ callback, /* DOMElement */ element) {
+						window.setTimeout(callback, 1000/60);
+					};
+		})();
+
+		function drawAframe() {
+			var context = canvas.getContext('2d');
+
+			// 用经过的时间指导画面变化
+			// 在Canvas上进行绘制，以表示变化
+			context.save();
+
+			// 先绘出已经存在的跑道图片
 			drawTrails();
+
+			// 将Canvas变暗以示阴沉的天空
+			// 让天色大部分时间阴沉，创建出闪电的动画效果
+			if(Math.random() > 0.01){
+				context.globalAlpha = 0.65;
+				context.fillStyle = '#000000';
+				context.fillRect(0, 0, 400, 600);
+				context.globalAlpha = 1.0;
+			}
+
+			// 然后根据当前时间进行调整，绘制雨天图像
+			var now = Date.now();
+			context.fillStyle = context.createPattern(rain, 'repeat');
+
+			context.save();
+			context.translate(-256 + (0.1*now)%256, -256+(0.5*now)%256);
+			context.fillRect(0, 0, 400+256, 600+256);
+			context.restore();
+
+			context.save();
+			context.translate(-256+(0.08*now)%256, -256+(0.2*now)%256);
+			context.fillRect(0,0,400+256,600+256);
+			context.restore();
+
+			// 绘制说明文本
+			context.font = '32px san-serif';
+			context.textAlign = 'center';
+			context.fillStyle = '#990000';
+			context.fillText('Event canceled due to weather!', 200, 550, 400);
+			context.restore();
+		}
+
+		function loopAnimation(currentTime) {
+
+			drawAframe();
+
+			window.requestAnimFrame(loopAnimation, canvas);
 		}
 	</script>
 </body>
